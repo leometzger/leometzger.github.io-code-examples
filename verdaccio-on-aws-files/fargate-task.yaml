@@ -1,0 +1,23 @@
+family: verdaccio-service-task
+executionRoleArn: "arn:aws:iam::[aws_account_id]:role/verdaccio-task"
+networkMode: awsvpc
+containerDefinitions:
+  - name: verdaccio
+    image: [aws_account_id].dkr.ecr.us-east-1.amazonaws.com/verdaccio-with-s3:latest
+    cpu: 512
+    memory: 1024
+    portMappings:
+      - containerPort: 4873
+        hostPort: 4873
+        protocol: tcp
+requiresCompatibilities:
+  - EC2
+  - FARGATE
+cpu: "512"
+memory: "1024"
+tags:
+  - key: domain
+    value: verdaccio
+runtimePlatform:
+  cpuArchitecture: ARM64
+  operatingSystemFamily: LINUX

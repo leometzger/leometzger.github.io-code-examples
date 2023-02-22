@@ -1,0 +1,28 @@
+storage: /verdaccio/storage/data
+
+store:
+  aws-s3-storage:
+    bucket: verdaccio-storage-lm
+    region: us-east-1
+    # !! Fill or add the roles !!
+    accessKeyId: ""
+    secretAccessKey: ""
+
+web:
+  title: Sua empresa Proxy Registry
+
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+
+packages:
+  "**":
+    access: $all
+    publish: $all
+    # if package is not available locally, proxy requests to 'npmjs' registry
+    proxy: npmjs
+
+server:
+  keepAliveTimeout: 60
+
+logs: { type: stdout, format: pretty, level: http }

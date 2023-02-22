@@ -1,0 +1,12 @@
+cluster: "verdaccio-cluster"
+serviceName: "verdaccio-service"
+taskDefinition: "verdaccio-service-task"
+desiredCount: 1
+launchType: FARGATE
+networkConfiguration: # The network configuration for the service.
+  awsvpcConfiguration: # The VPC subnets and security groups that are associated with a task.
+    subnets: # [REQUIRED] The IDs of the subnets associated with the task or service.
+      - ""
+    securityGroups: # The IDs of the security groups associated with the task or service.
+      - ""
+    assignPublicIp: ENABLED
