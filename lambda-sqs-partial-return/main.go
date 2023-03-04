@@ -24,8 +24,9 @@ func handler(ctx context.Context, event events.SQSEvent) (string, error) {
 	var failures BatchItemFailures
 
 	for _, message := range event.Records {
+		// Simulação de um processamento
+		fmt.Println("Processing message:", message.Body)
 		time.Sleep(200 * time.Millisecond)
-		fmt.Println(message.Body)
 
 		if rand.Intn(10) < 2 {
 			fmt.Println("Failed", message.MessageId)
@@ -38,14 +39,15 @@ func handler(ctx context.Context, event events.SQSEvent) (string, error) {
 		}
 	}
 
-	fmt.Println("Total failed", len(failures.BatchItemFailures))
-
 	response, err := json.Marshal(failures)
 	if err != nil {
 		log.Fatal("Error marshaling BatchItemFailures")
 	}
 
+	fmt.Println("Total failed", len(failures.BatchItemFailures))
 	fmt.Println("Response", string(response))
+
+	// Apenas as mensagens falhadas voltarão para a fila para serem reprocessadas
 	return string(response), nil
 }
 
