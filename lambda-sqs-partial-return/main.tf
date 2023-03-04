@@ -5,7 +5,7 @@ resource "aws_iam_policy" "allow_logs_policy" {
 }
 
 
-resource "aws_iam_policy" "allow_consume_sqs_incoming_events" {
+resource "aws_iam_policy" "allow_consume_sqs_incoming_events_policy" {
   name        = "AllowConsumeSQSIncomingEvents"
   description = "Allow lambda to save logs on cloudwatch"
   policy      = data.aws_iam_policy_document.allow_consume_sqs_incoming_events.json
@@ -31,11 +31,11 @@ resource "aws_iam_role_policy_attachment" "attach_logs_policy" {
 
 resource "aws_iam_role_policy_attachment" "attach_consume_sqs_policy" {
   role       = aws_iam_role.iam_for_lambda.name
-  policy_arn = aws_iam_policy.allow_consume_sqs_incoming_events.arn
+  policy_arn = aws_iam_policy.allow_consume_sqs_incoming_events_policy.arn
 
   depends_on = [
     aws_lambda_function.lambda_sqs_partial_return,
-    aws_iam_policy.allow_consume_sqs_incoming_events
+    aws_iam_policy.allow_consume_sqs_incoming_events_policy
   ]
 }
 
@@ -73,5 +73,4 @@ resource "aws_lambda_event_source_mapping" "incoming_events_to_ingest" {
   batch_size                         = 10
   maximum_batching_window_in_seconds = 30
   function_response_types            = ["ReportBatchItemFailures"]
-  maximum_retry_attempts             = 1
 }

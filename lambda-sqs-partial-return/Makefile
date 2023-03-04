@@ -14,6 +14,7 @@ validate:
 
 .PHONY: deploy
 deploy:
+	make build
 	terraform apply
 
 .PHONY: destroy
