@@ -45,6 +45,7 @@ func handler(ctx context.Context, event events.SQSEvent) (string, error) {
 		log.Fatal("Error marshaling BatchItemFailures")
 	}
 
+	fmt.Println("Response", string(response))
 	return string(response), nil
 }
 

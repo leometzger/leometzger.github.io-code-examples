@@ -54,11 +54,6 @@ resource "aws_sqs_queue" "sqs_incoming_events_dlq" {
   name                      = "sqs-incoming-events-dlq"
   max_message_size          = 2048
   message_retention_seconds = 86400
-
-  redrive_allow_policy = jsonencode({
-    redrivePermission = "byQueue",
-    sourceQueueArns   = [aws_sqs_queue.sqs_incoming_events.arn]
-  })
 }
 
 
@@ -66,11 +61,17 @@ resource "aws_sqs_queue" "sqs_incoming_events" {
   name                      = "sqs-incoming-events"
   max_message_size          = 2048
   message_retention_seconds = 86400
+  redrive_policy = jsonencode({
+    maxReceiveCount     = 1
+    deadLetterTargetArn = aws_sqs_queue.sqs_incoming_events_dlq.arn
+  })
 }
 
 resource "aws_lambda_event_source_mapping" "incoming_events_to_ingest" {
-  event_source_arn        = aws_sqs_queue.sqs_incoming_events.arn
-  function_name           = aws_lambda_function.lambda_sqs_partial_return.arn
-  batch_size              = 10
-  function_response_types = ["ReportBatchItemFailures"]
+  event_source_arn                   = aws_sqs_queue.sqs_incoming_events.arn
+  function_name                      = aws_lambda_function.lambda_sqs_partial_return.arn
+  batch_size                         = 10
+  maximum_batching_window_in_seconds = 30
+  function_response_types            = ["ReportBatchItemFailures"]
+  maximum_retry_attempts             = 1
 }
